@@ -37,10 +37,11 @@ jobs:
         with:
           projectBaseDir: .
           extraProperties: |
-            sonar.projectKey=alexjelani_python-fastapi
+            sonar.organization=${{ secrets.SONAR_ORGANIZATION }}
+            sonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
             sonar.sources=.
             sonar.python.coverage.reportPaths=coverage.xml
-            sonar.tests=tests
+            sonar.tests=tests                                                                                   
             sonar.test.inclusions=tests/**/*.py
             sonar.sourceEncoding=UTF-8
             sonar.exclusions=.github/**,tests/**
