@@ -38,4 +38,5 @@ jobs:
         uses: sonarsource/sonarqube-scan-action@v5.0.0
         with:
           projectBaseDir: .
-          args: "-Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }} -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} -Dsonar.sources=. -Dsonar.python.coverage.reportPaths=coverage.xml -Dsonar.tests=tests -Dsonar.test.inclusions=tests/**/*.py -Dsonar.sourceEncoding=UTF-8 -Dsonar.exclusions=.github/**,tests/** -Dsonar.login=${{ secrets.SONAR_TOKEN }}"
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
