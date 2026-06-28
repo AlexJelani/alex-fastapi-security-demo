@@ -1,13 +1,6 @@
 name: SonarCloud Scan
 
 on:
-  push:
-    branches:
-      - main
-      - sonarcloud-integration
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
