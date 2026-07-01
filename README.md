@@ -1,85 +1,108 @@
-# Python FastAPI
+# alex-fastapi-security-demo
 
-This project sets up a simple FastAPI application (with some vulnerabilites) within a Docker container. It uses the official Python runtime and includes all necessary configurations to deploy a FastAPI app with Docker. The container will expose the app on port 80 and automatically run the FastAPI app on startup.
+A simple FastAPI security demo application with a GitHub Actions pipeline that builds, scans, tests, and publishes a Docker image.
+
+## Current Setup
+
+- FastAPI application in `main.py`
+- Dependencies in `requirements.txt`
+- Docker container build via `Dockerfile`
+- GitHub Actions workflows in `.github/workflows/`
+- Container image published to GitHub Container Registry: `ghcr.io/alexjelani/python-fastapi`
+- Security scanning via OWASP ZAP and Trivy in CI
 
 ## Requirements
 
 - Docker
 - Python 3.12+
-- FastAPI
-- Uvicorn
-
-## Features
-
-- **Dockerized FastAPI application**: A containerized setup for easy deployment.
-- **Python 3.12.5 runtime**: Uses the latest stable Python version as a base.
-- **Efficient package installation**: Installs required dependencies via `requirements.txt`.
+- `pip` or virtual environment support
 
 ## Project Structure
 
 ```bash
-gcp-python-fastapi/
-├── Dockerfile
-├── requirements.txt
-├── main.py  # FastAPI app entry point
-└── ...
+alex-fastapi-security-demo/
+├── .github/workflows/          # CI workflows
+├── Dockerfile                 # Docker image build definition
+├── README.md                  # Project documentation
+├── main.py                    # FastAPI app entry point
+├── requirements.txt           # Python dependencies
+├── sonar-project.properties   # SonarCloud project settings
+└── tests/                     # Unit tests
 ```
 
-- **Dockerfile**: Configures the Docker container for the FastAPI app.
-- **requirements.txt**: Specifies the required Python dependencies for the application.
-- **main.py**: The entry point for the FastAPI application (Make sure to include this file in the project structure).
+## Running Locally
 
-## Setup and Installation
-
-### 1. Clone the repository
-
-If you haven't cloned the project yet, use the following command:
+1. Install dependencies:
 
 ```bash
-git clone https://github.com/your-username/python-fastapi.git
-cd python-fastapi
+python -m pip install -r requirements.txt
 ```
 
-### 2. Build the Docker image
-
-To build the Docker image, run the following command in the root of the project directory:
+2. Start the app locally:
 
 ```bash
-docker build -t python-fastapi .
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### 3. Run the Docker container
+3. Open the app in your browser:
 
-After the image is built, run the container:
+```text
+http://127.0.0.1:8000
+```
+
+## Docker
+
+Build the Docker image locally:
 
 ```bash
-docker run -d -p 80:80 python-fastapi
+docker build -t alex-fastapi-security-demo .
 ```
 
-This command will run the FastAPI app on port 80 of your localhost.
-
-### 4. Access the app
-
-Once the container is running, you can access the FastAPI application by navigating to:
-
-```
-http://localhost:80
-```
-
-## Dependencies
-
-The project uses the following Python packages, which are listed in the `requirements.txt` file:
-
-- `fastapi`: The core framework for building the API.
-- `uvicorn`: ASGI server to run the FastAPI application.
-
-To install dependencies locally, use the following:
+Run the container:
 
 ```bash
-pip install -r requirements.txt
+docker run -d -p 8000:8000 alex-fastapi-security-demo
+```
+
+Access the running app at:
+
+```text
+http://127.0.0.1:8000
+```
+
+## GitHub Actions
+
+The repository includes a main CI pipeline in `.github/workflows/main.yml`.
+It runs on pushes to `main` and manual dispatch.
+
+The pipeline performs:
+
+- Docker image build
+- Python linting and formatting checks
+- Unit tests
+- Trivy vulnerability scan on the image
+- OWASP ZAP app scan
+- SonarCloud analysis
+- Docker image publish via `.github/workflows/push-docker-image.yml`
+
+## Published Image
+
+The pipeline publishes to GitHub Container Registry:
+
+- `ghcr.io/alexjelani/python-fastapi:${{ github.sha }}`
+- `ghcr.io/alexjelani/python-fastapi:latest`
+- `ghcr.io/alexjelani/python-fastapi:testing`
+
+## Tests
+
+Run unit tests locally with:
+
+```bash
+pytest tests/
 ```
 
 ## Notes
 
-- This setup assumes that your FastAPI app’s entry point is `main.py`, and the FastAPI application instance is named `app`. If your app is structured differently, you may need to modify the `CMD` directive in the Dockerfile accordingly.
-- The container will expose the application on port 80. If you want to use a different port, adjust the `EXPOSE` and `CMD` directives in the Dockerfile.
+- The app is intentionally insecure in places for educational purposes.
+- Keep the `main` branch as the production branch.
+- The GitHub workflow currently requires a `GHCR_PAT` repository secret for image publish fallback.
